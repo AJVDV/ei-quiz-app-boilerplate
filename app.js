@@ -5,8 +5,7 @@ const store = {
   // 5 or more questions are required
   questions: [
     {
-      id: 1,
-      question: 'Foxes by behaviour are closer to?',
+      question: 'Foxes by behaviour are closest to?',
       answers: [
         'dogs',
         'squirrels',
@@ -18,7 +17,6 @@ const store = {
       alt: 'A jumpy fox'
     },
     {
-      id: 2,
       question: 'The smallest species of fox weighs approximately how much?',
       answers: [
         '20 .lbs',
@@ -31,7 +29,6 @@ const store = {
       alt: 'A fennec fox'
     },
     {
-      id: 3,
       question: 'How cold does it have to be for an arctic fox to shiver?',
       answers: [
         '15 degrees celsius',
@@ -44,7 +41,6 @@ const store = {
       alt: 'An arctic fox'
     },
     {
-      id: 4,
       question: 'A unique sense foxes have allow them to use what to judge distance and direction?',
       answers: [
         "the position of the sun",
@@ -57,7 +53,6 @@ const store = {
       alt: 'Fox using their special skills'
     },
     {
-      id: 5,
       question: 'As far as diet is concerned foxes are:',
       answers: [
         'carnivorous (meat only)',
@@ -70,7 +65,6 @@ const store = {
       alt: 'a fox looking for a snack'
     },
     {
-      id: 6,
       question: 'Fox bones weigh __ bones of a dog roughly the same size.',
       answers: [
         '30% less than',
@@ -144,7 +138,7 @@ function generateItemElement(item) {
         <button class="submitAnswer" type="submit">Submit</button>
       </div>
   </form>
-  <footer><p>You are currently on question ${item.id} out of 6. You have ${item.score} correct so far.</p></footer>
+  <footer><p>You are currently on question ${store.questionNumber+1} out of 6. You have ${store.score} correct, and ${store.questionNumber-store.score} incorrect so far.</p></footer>
   </div>`;
 }
 
@@ -152,8 +146,8 @@ function generateItemElement(item) {
 //currently this takes all questions and strings them together, need to change to only call one at a time.
  function generateQuizQuestionString(item) {
   console.log("Generating Quiz Question Element");
-  const items = store.questions.map((item) => generateItemElement(item));
-  return items.join("");
+  return generateItemElement(store.questions[store.questionNumber]);
+//  return items.join("");
 }
 
 
@@ -185,28 +179,10 @@ function render() {
     $('main').html(quizQuestionString);
   }
 }
-/*
-function renderQuizQuestion() {
-  console.log('`renderQuizQuestion` ran');
-  const quizQuestionString = generateQuizQuestionString(STORE);
-  $('main').html(quizQuestionString);
-}
-*/
+
 //Honestly I'm not sure how much of this I need, I effectively worked of of the framework for the shopping
 //list, which is not the same style that I need.
 
-/*function renderStartPage() {
-  console.log('`renderStartPage` ran');
-  const startPageString = generateStartPage();
-  $('main').html(startPageString);
-}
-
-
-/*
-$(document).ready(function() {
-  $('main').html("This code is working");
-});
-*/
 
 /********** EVENT HANDLER FUNCTIONS **********/
 
@@ -214,20 +190,27 @@ $(document).ready(function() {
 
 //this function is made to submit the andswer chosen on the radial buttons when submit is clicked
 //and then generate and load the next page-- still having trouble coming up with that last part
-/*
+
 function submitAnswer() {
   $('#js-question-submit-form').submit(function(event){
     event.preventDefault();
     console.log('`submitAnswer` ran');
     var quizAnswer = $("input[name='answer']:checked").val();
-    if (quizAnswer = item.correctAnswer) {
+    if (quizAnswer === item.correctAnswer) {
       score ++;
-      generateItemElement();
-      renderQuizQuestions();
+      store.questionNumber ++;
+      generateQuizQuestionString();
+      render();
+    } else if (quizAnswer === undefined) {
+      render();
+    } else {
+      store.questionNumber ++;
+//      generateQuizQuestionString();
+      render();
     }
-  })
+  });
 }
-*/
+
 //this function should listen for the user to click on the start button on the opening screen, 
 
 function startQuiz() {
@@ -235,8 +218,6 @@ function startQuiz() {
     event.preventDefault();
     console.log('`Quiz Start` ran');
     store.quizStarted = true;
-//    generateQuizQuestionString();
-//    generateItemElement(items);
     render();
   });
 }
@@ -256,7 +237,7 @@ $(function() {
 */
 function handleQuizQuestions(){
   render();
-//  submitAnswer();
+  submitAnswer();
   startQuiz();
 }
 
