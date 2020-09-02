@@ -236,7 +236,7 @@ function submitAnswer() {
     }
   });
 }
-function nextQuestion ()
+//function nextQuestion ()
 //this function should listen for the user to click on the start button on the opening screen, 
 
 function startQuiz() {
