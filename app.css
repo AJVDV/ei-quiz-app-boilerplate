@@ -6,3 +6,91 @@
   * https://github.com/andreacardybailey/responsive_example/blob/master/styles/responsive-base.css 
   *
 */
+body {
+  background-color: #C1AE7C;
+}
+
+main {
+  margin-top: 50px;
+  margin-right: 50px;
+  margin-left: 50px;
+}
+
+hr {
+  height: 8px;
+  background-color: #59656F;
+}
+
+h1 {
+  margin: 10px 10px;
+  text-align: center;
+  font-family: "Arial Black";
+  font-size: 60px;
+  color: #9B1D20;
+}
+
+h2 {
+  margin: 15px 5px 15px 5px;
+  border-bottom: 2px solid #1D3557;
+  font-family: "Trebuchet MS";
+  font-size: 20px;
+  color: #A6D9F7;
+  text-align: center;
+}
+
+p {
+  font-family: "Lucidia Console";
+  margin-top: 5px;
+  color: #59656F;
+  text-align: center;
+}
+
+img{
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+.imgContainer {
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  justify-content: center;
+  justify-items: center;
+  justify-self: center;
+  flex-wrap: wrap;
+}
+
+.navigation-buttons {
+  text-align: center;
+  margin: 15px 5px 15px 5px;
+}
+
+.item {
+  flex: 1;
+  margin: 5px;
+  color:#59656F;
+}
+
+@media all and (min-width: 800px){
+  section {
+    padding: 0 10%;
+  }
+  .group {
+    flex-flow: row wrap;
+  }
+  h1 h2 {
+    text-align: center;
+  }
+  main {
+    margin-right: 250px;
+    margin-left: 250px;
+  }  
+}

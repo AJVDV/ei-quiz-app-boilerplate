@@ -102,6 +102,8 @@ const store = {
 // These functions return HTML templates
 // this should generate the start page, because it's only a string with no variable I don't know if i need
 //to use a generate string function as well.
+let message = "";
+
 function generateStartPage(){
   return `
   <div data-item-id="0">
@@ -109,7 +111,7 @@ function generateStartPage(){
   <form id="js-question-start-form">
     <h2>Welcome to the fun fox facts quiz!</h2>
     <p>When you are ready, click the start button to begin.</p>
-    <div class="navigation buttons">
+    <div class="navigation-buttons">
       <button class="startQuiz" type="submit">Start Quiz</button>
     </div>
   </form>
@@ -117,6 +119,20 @@ function generateStartPage(){
   `
 }
 
+function generateFinalPage(){
+  return `
+  <div data-item-id="0">
+  <div class="imgContainer"><img src="images/wildlife_fox.jpg" alt="Majestic fox"/></div>
+  <form id="js-question-start-form">
+    <h2>You have completed the quiz!</h2>
+    <p>You got ${store.score} correct, and ${6-store.score} incorrect. Click the restart button if you'd like to try again.</p>
+    <div class="navigation-buttons">
+      <button class="startQuiz" type="submit">Restart Quiz</button>
+    </div>
+  </form>
+  </div>
+  `
+}
 //this function loads from store the info into a string that will eventually be rendered on page.
 //I may need to have this also store the correct answer for the question somewhere, so it can be compared.
 
@@ -124,17 +140,28 @@ function generateItemElement(item) {
   return `
   <div data-item-id="${item.id}">
   <div class = "imgContainer"><img src="${item.img}" alt="${item.alt}"/></div>
+  <p>${message}</p>
   <form id="js-question-submit-form">
     <h2 class = question>${item.question}</h2>
-      <input name="answer" type="radio" value="${item.answers[0]}">
-        <label for="${item.answers[0]}">${item.answers[0]}</label><br>
-      <input name="answer" type="radio" value="${item.answers[1]}">
-        <label for="${item.answers[1]}">${item.answers[1]}</label><br>
-      <input name="answer" type="radio" value="${item.answers[2]}">
-        <label for="${item.answers[2]}">${item.answers[2]}</label><br>
-      <input name="answer" type="radio" value="${item.answers[3]}">
-        <label for="${item.answers[3]}">${item.answers[3]}</label><br>
-      <div class="navigation buttons">
+      <div class="group">
+        <div class="item">
+          <input name="answer" type="radio" value="${item.answers[0]}">
+            <label for="${item.answers[0]}">${item.answers[0]}</label><br>
+        </div>
+        <div class="item">
+          <input name="answer" type="radio" value="${item.answers[1]}">
+            <label for="${item.answers[1]}">${item.answers[1]}</label><br>
+        </div>
+        <div class="item">
+          <input name="answer" type="radio" value="${item.answers[2]}">
+            <label for="${item.answers[2]}">${item.answers[2]}</label><br>
+        </div>
+        <div class="item">
+          <input name="answer" type="radio" value="${item.answers[3]}">
+            <label for="${item.answers[3]}">${item.answers[3]}</label><br>
+        </div>
+      </div>
+      <div class="navigation-buttons">
         <button class="submitAnswer" type="submit">Submit</button>
       </div>
   </form>
@@ -145,7 +172,6 @@ function generateItemElement(item) {
 //this function generates the next quiz question page to be rendered as a string
 //currently this takes all questions and strings them together, need to change to only call one at a time.
  function generateQuizQuestionString(item) {
-  console.log("Generating Quiz Question Element");
   return generateItemElement(store.questions[store.questionNumber]);
 //  return items.join("");
 }
@@ -169,12 +195,13 @@ function generateStartPageString() {
 //this function simply renders the page based on teh quiz question string.
 
 function render() {
-  if (store.quizStarted === false) {
-    console.log('`renderStartPage` ran');
+  if (store.questionNumber===6){
+    const finalPageString = generateFinalPage();
+    $('main').html(finalPageString);
+  } else if (store.quizStarted === false) {
     const startPageString = generateStartPage();
     $('main').html(startPageString);
   } else if (store.quizStarted === true) {
-    console.log('`renderQuizQuestion` ran');
     const quizQuestionString = generateQuizQuestionString();
     $('main').html(quizQuestionString);
   }
@@ -188,24 +215,23 @@ function render() {
 
 // These functions handle events (submit, click, etc)
 
-//this function is made to submit the andswer chosen on the radial buttons when submit is clicked
-//and then generate and load the next page-- still having trouble coming up with that last part
+//this function is made to submit the answer chosen on the radial buttons when submit is clicked
 
 function submitAnswer() {
-  $('#js-question-submit-form').submit(function(event){
+  $('body').on('submit', '#js-question-submit-form', function (event){
     event.preventDefault();
-    console.log('`submitAnswer` ran');
     var quizAnswer = $("input[name='answer']:checked").val();
-    if (quizAnswer === item.correctAnswer) {
-      score ++;
-      store.questionNumber ++;
-      generateQuizQuestionString();
+    if (quizAnswer === undefined) {
+      message = "Please select an answer."
       render();
-    } else if (quizAnswer === undefined) {
+    } else if (quizAnswer === store.questions[store.questionNumber].correctAnswer) {
+      store.score ++;
+      store.questionNumber ++;
+      message = "You chose the correct answer!";
       render();
     } else {
+      message = `That was incorrect, the correct answer was ${store.questions[store.questionNumber].correctAnswer}.`;
       store.questionNumber ++;
-//      generateQuizQuestionString();
       render();
     }
   });
@@ -216,7 +242,6 @@ function submitAnswer() {
 function startQuiz() {
   $('#js-question-start-form').submit(function(event) {
     event.preventDefault();
-    console.log('`Quiz Start` ran');
     store.quizStarted = true;
     render();
   });
